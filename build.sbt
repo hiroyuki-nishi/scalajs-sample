@@ -15,6 +15,14 @@ lazy val commonSettings = Seq(
   test in assembly := {}
 )
 
+val assemblySettings = Seq(
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+    case _ => MergeStrategy.first
+  },
+  assemblyJarName in assembly := s"${name.value}.jar"
+)
+
 lazy val root = (project in file("."))
   .aggregate(
     presentation
@@ -33,6 +41,14 @@ lazy val root = (project in file("."))
 
 lazy val presentation = (project in file("modules/adapter/presentation"))
   .settings(commonSettings: _*)
+  .settings(assemblySettings: _*)
+  .settings(
+    libraryDependencies ++= lambdaDependencies
+  )
+
+lazy val main = (project in file("modules/adapter/presentation/main"))
+  .settings(commonSettings: _*)
+  .settings(assemblySettings: _*)
   .settings(
     libraryDependencies ++= lambdaDependencies
   )
